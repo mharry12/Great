@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* Add to your CSS file */
+.chase-logo {
+  mix-blend-mode: screen;
+  filter: brightness(1.1) contrast(1.1);
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  mask-image: radial-gradient(white, black);
+}
