@@ -4,19 +4,106 @@ import ChaseLogo from "../assets/chase logo 2.png";
 import PlusImage from "../assets/plus.png";
 
 const TRANSACTIONS = [
-  { id: 1,  icon: "ti-bolt",              bg: "bg-yellow-100", color: "text-yellow-600", label: "Electricity Bill", sub: "EKEDC Power",           amount: -12400,  date: "Jun 22", category: "electricity" },
-  { id: 2,  icon: "ti-droplet",           bg: "bg-blue-100",   color: "text-blue-600",   label: "Water Bill",       sub: "Lagos Water Corp",      amount: -4200,   date: "Jun 20", category: "water"       },
-  { id: 3,  icon: "ti-player-play",       bg: "bg-red-100",    color: "text-red-600",    label: "Netflix",          sub: "Monthly Subscription",  amount: -4900,   date: "Jun 19", category: "bills"       },
-  { id: 4,  icon: "ti-send",              bg: "bg-violet-100", color: "text-violet-600", label: "Zelle Transfer",   sub: "To: Michael A.",         amount: -50000,  date: "Jun 18", category: "transfer"    },
-  { id: 5,  icon: "ti-device-mobile",     bg: "bg-orange-100", color: "text-orange-600", label: "Phone Bill",       sub: "MTN Monthly Plan",      amount: -8500,   date: "Jun 16", category: "phone"       },
-  { id: 6,  icon: "ti-arrow-down-circle", bg: "bg-green-100",  color: "text-green-600",  label: "Deposit",          sub: "Direct Deposit",        amount: 200000,  date: "Jun 15", category: "transfer"    },
-  { id: 7,  icon: "ti-wifi",              bg: "bg-sky-100",    color: "text-sky-600",    label: "Internet Bill",    sub: "Spectranet Broadband",  amount: -15000,  date: "Jun 13", category: "bills"       },
-  { id: 8,  icon: "ti-bolt",              bg: "bg-yellow-100", color: "text-yellow-600", label: "Electricity Bill", sub: "EKEDC Power",           amount: -11800,  date: "Jun 10", category: "electricity" },
-  { id: 9,  icon: "ti-music",             bg: "bg-green-100",  color: "text-green-600",  label: "Spotify",          sub: "Premium Subscription",  amount: -3200,   date: "Jun 9",  category: "bills"       },
-  { id: 10, icon: "ti-send",              bg: "bg-violet-100", color: "text-violet-600", label: "Zelle Transfer",   sub: "To: Sarah K.",           amount: -25000,  date: "Jun 8",  category: "transfer"    },
-  { id: 11, icon: "ti-droplet",           bg: "bg-blue-100",   color: "text-blue-600",   label: "Water Bill",       sub: "Lagos Water Corp",      amount: -3900,   date: "Jun 5",  category: "water"       },
-  { id: 12, icon: "ti-home",              bg: "bg-purple-100", color: "text-purple-600", label: "Rent Payment",     sub: "Victoria Island Apt",   amount: -350000, date: "Jun 1",  category: "bills"       },
+  { id: 1,  icon: "ti-bolt",              bg: "bg-yellow-100", color: "text-yellow-600", label: "Electricity Bill", sub: "Con Edison",              amount: -12400,  date: "Jun 22", category: "electricity" },
+  { id: 2,  icon: "ti-droplet",           bg: "bg-blue-100",   color: "text-blue-600",   label: "Water Bill",       sub: "NYC Water Board",         amount: -4200,   date: "Jun 20", category: "water"       },
+  { id: 3,  icon: "ti-player-play",       bg: "bg-red-100",    color: "text-red-600",    label: "Netflix",          sub: "Monthly Subscription",    amount: -4900,   date: "Jun 19", category: "bills"       },
+  { id: 4,  icon: "ti-send",              bg: "bg-violet-100", color: "text-violet-600", label: "Zelle Transfer",   sub: "To: Michael A.",          amount: -50000,  date: "Jun 18", category: "transfer"    },
+  { id: 5,  icon: "ti-device-mobile",     bg: "bg-orange-100", color: "text-orange-600", label: "Phone Bill",       sub: "Verizon Monthly Plan",    amount: -8500,   date: "Jun 16", category: "phone"       },
+  { id: 6,  icon: "ti-arrow-down-circle", bg: "bg-green-100",  color: "text-green-600",  label: "Deposit",          sub: "Direct Deposit",          amount: 200000,  date: "Jun 15", category: "transfer"    },
+  { id: 7,  icon: "ti-wifi",              bg: "bg-sky-100",    color: "text-sky-600",    label: "Internet Bill",    sub: "Xfinity Broadband",       amount: -15000,  date: "Jun 13", category: "bills"       },
+  { id: 8,  icon: "ti-bolt",              bg: "bg-yellow-100", color: "text-yellow-600", label: "Electricity Bill", sub: "Con Edison",              amount: -11800,  date: "Jun 10", category: "electricity" },
+  { id: 9,  icon: "ti-music",             bg: "bg-green-100",  color: "text-green-600",  label: "Spotify",          sub: "Premium Subscription",    amount: -3200,   date: "Jun 9",  category: "bills"       },
+  { id: 10, icon: "ti-send",              bg: "bg-violet-100", color: "text-violet-600", label: "Zelle Transfer",   sub: "To: Sarah K.",            amount: -25000,  date: "Jun 8",  category: "transfer"    },
+  { id: 11, icon: "ti-droplet",           bg: "bg-blue-100",   color: "text-blue-600",   label: "Water Bill",       sub: "NYC Water Board",         amount: -3900,   date: "Jun 5",  category: "water"       },
+  { id: 12, icon: "ti-home",              bg: "bg-purple-100", color: "text-purple-600", label: "Rent Payment",     sub: "Manhattan Apt · Unit 4B", amount: -350000, date: "Jun 1",  category: "bills"       },
 ];
+
+// ── SVG brand icons for Open an Account cards ──────────────────────────────
+const AccountIcons = {
+  CreditCards: () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <rect x="2" y="5" width="20" height="14" rx="3" fill="#7c3aed" opacity="0.15"/>
+      <rect x="2" y="5" width="20" height="14" rx="3" stroke="#7c3aed" strokeWidth="1.8"/>
+      <path d="M2 9h20" stroke="#7c3aed" strokeWidth="1.8"/>
+      <rect x="5" y="13" width="5" height="2.5" rx="0.8" fill="#7c3aed"/>
+      <circle cx="18" cy="14.5" r="2" fill="#7c3aed" opacity="0.4"/>
+      <circle cx="20" cy="14.5" r="2" fill="#7c3aed" opacity="0.7"/>
+    </svg>
+  ),
+  Business: () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="10" width="18" height="11" rx="2" stroke="#15803d" strokeWidth="1.8"/>
+      <path d="M8 10V7a4 4 0 018 0v3" stroke="#15803d" strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M3 15h18" stroke="#15803d" strokeWidth="1.5" strokeDasharray="2 2"/>
+      <rect x="10" y="13" width="4" height="4" rx="1" fill="#15803d" opacity="0.5"/>
+    </svg>
+  ),
+  Savings: () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <path d="M19 11c0 4.42-3.13 8-7 8s-7-3.58-7-8a7 7 0 0114 0z" stroke="#b45309" strokeWidth="1.8"/>
+      <path d="M12 7v4l2.5 2.5" stroke="#b45309" strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M19 5l1.5-1.5M5 5L3.5 3.5" stroke="#b45309" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M9 3h6" stroke="#b45309" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  ),
+  Investments: () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <polyline points="4,17 9,12 13,15 20,7" stroke="#0369a1" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx="20" cy="7" r="2" fill="#0369a1"/>
+      <path d="M4 20h16" stroke="#0369a1" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M4 7v13" stroke="#0369a1" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  ),
+  Mortgage: () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <path d="M3 10.5L12 3l9 7.5" stroke="#9d174d" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M5 9v11h14V9" stroke="#9d174d" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+      <rect x="9" y="14" width="6" height="6" rx="1" stroke="#9d174d" strokeWidth="1.5"/>
+      <path d="M12 14v6" stroke="#9d174d" strokeWidth="1.2" strokeLinecap="round"/>
+    </svg>
+  ),
+};
+
+// ── SVG brand-style icons for Vault Offers cards ──────────────────────────
+const OfferIcons = {
+  OakHoney: () => (
+    <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+      {/* Honeycomb hex */}
+      <polygon points="19,4 31,11 31,25 19,32 7,25 7,11" fill="#a855f7" opacity="0.18"/>
+      <polygon points="19,4 31,11 31,25 19,32 7,25 7,11" stroke="#7e22ce" strokeWidth="1.5" fill="none"/>
+      {/* Leaf */}
+      <path d="M14 22 Q19 12 24 16 Q19 26 14 22Z" fill="#7e22ce" opacity="0.7"/>
+      <path d="M19 19 Q16 21 14 22" stroke="#7e22ce" strokeWidth="1" strokeLinecap="round"/>
+    </svg>
+  ),
+  Faire: () => (
+    <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+      {/* Shopping bag */}
+      <rect x="8" y="14" width="22" height="18" rx="3" fill="#dc2626" opacity="0.15" stroke="#dc2626" strokeWidth="1.6"/>
+      <path d="M14 14v-3a5 5 0 0110 0v3" stroke="#dc2626" strokeWidth="1.6" strokeLinecap="round"/>
+      <path d="M13 22h12M13 27h8" stroke="#dc2626" strokeWidth="1.4" strokeLinecap="round" opacity="0.6"/>
+    </svg>
+  ),
+  KiwiCo: () => (
+    <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+      {/* Rocket / education */}
+      <circle cx="19" cy="19" r="13" fill="#1d4ed8" opacity="0.1" stroke="#1d4ed8" strokeWidth="1.5"/>
+      <path d="M19 10 Q24 14 24 19 Q24 24 19 27 Q14 24 14 19 Q14 14 19 10Z" fill="#1d4ed8" opacity="0.6"/>
+      <circle cx="19" cy="19" r="3" fill="#fff"/>
+      <path d="M14 24 L11 27M24 24 L27 27" stroke="#1d4ed8" strokeWidth="1.4" strokeLinecap="round"/>
+    </svg>
+  ),
+  Instacart: () => (
+    <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+      {/* Cart */}
+      <path d="M7 9h3l3 14h14l3-10H13" stroke="#15803d" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx="16" cy="27" r="2" fill="#15803d"/>
+      <circle cx="24" cy="27" r="2" fill="#15803d"/>
+      {/* Carrot top */}
+      <path d="M22 9 Q25 5 28 7" stroke="#15803d" strokeWidth="1.4" strokeLinecap="round" opacity="0.5"/>
+    </svg>
+  ),
+};
 
 export default function ChaseVaultApp() {
   const [username, setUsername] = useState("");
@@ -77,18 +164,18 @@ export default function ChaseVaultApp() {
   ];
 
   const accounts = [
-    { bg: "bg-violet-100", iconColor: "text-violet-700", icon: "ti-credit-card", label: "Credit Cards" },
-    { bg: "bg-green-100", iconColor: "text-green-700", icon: "ti-briefcase", label: "Business" },
-    { bg: "bg-amber-100", iconColor: "text-amber-700", icon: "ti-piggy-bank", label: "Saving & CD" },
-    { bg: "bg-sky-100", iconColor: "text-sky-700", icon: "ti-coin", label: "Investments" },
-    { bg: "bg-pink-100", iconColor: "text-pink-800", icon: "ti-home", label: "Mortgage" },
+    { bg: "#f3e8ff", iconBg: "#ede9fe", iconColor: "#7c3aed", label: "Credit Cards",  Icon: AccountIcons.CreditCards  },
+    { bg: "#dcfce7", iconBg: "#bbf7d0", iconColor: "#15803d", label: "Business",      Icon: AccountIcons.Business      },
+    { bg: "#fef3c7", iconBg: "#fde68a", iconColor: "#b45309", label: "Saving & CD",   Icon: AccountIcons.Savings       },
+    { bg: "#e0f2fe", iconBg: "#bae6fd", iconColor: "#0369a1", label: "Investments",   Icon: AccountIcons.Investments   },
+    { bg: "#fce7f3", iconBg: "#fbcfe8", iconColor: "#9d174d", label: "Mortgage",      Icon: AccountIcons.Mortgage      },
   ];
 
   const offers = [
-    { bg: "bg-violet-200", tagBg: "bg-violet-700", tagText: "text-violet-100", tag: "New", icon: "ti-leaf", iconColor: "text-violet-900", name: "Oak & Honey", cb: "5% cash back" },
-    { bg: "bg-red-200", tagBg: "bg-red-600", tagText: "text-red-50", tag: "New", icon: "ti-shopping-bag", iconColor: "text-red-900", name: "Faire", cb: "20% cash back" },
-    { bg: "bg-blue-200", tagBg: "bg-blue-700", tagText: "text-blue-50", tag: "Limited", icon: "ti-school", iconColor: "text-blue-900", name: "KiwiCo", cb: "15% cash back" },
-    { bg: "bg-green-200", tagBg: "bg-green-700", tagText: "text-green-50", tag: "Limited", icon: "ti-truck", iconColor: "text-green-900", name: "Instacart", cb: "10% cash back" },
+    { bg: "#f3e8ff", tagBg: "#7e22ce", tag: "New",     Icon: OfferIcons.OakHoney,  name: "Oak & Honey", cb: "5% cash back"  },
+    { bg: "#fee2e2", tagBg: "#dc2626", tag: "New",     Icon: OfferIcons.Faire,     name: "Faire",       cb: "20% cash back" },
+    { bg: "#dbeafe", tagBg: "#1d4ed8", tag: "Limited", Icon: OfferIcons.KiwiCo,    name: "KiwiCo",      cb: "15% cash back" },
+    { bg: "#dcfce7", tagBg: "#15803d", tag: "Limited", Icon: OfferIcons.Instacart, name: "Instacart",   cb: "10% cash back" },
   ];
 
   const navItems = [
@@ -128,16 +215,10 @@ export default function ChaseVaultApp() {
           {/* ── HEADER BRAND AREA ── */}
           <div style={{ textAlign: "center", paddingBottom: 32, paddingTop: 16 }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 8 }}>
-              {/* Chase logo — mix-blend-mode to strip white bg */}
               <img
                 src={ChaseLogo}
                 alt="Chase"
-                style={{
-                  height: 42,
-                  width: "auto",
-                  mixBlendMode: "screen",
-                  filter: "brightness(2) saturate(0) invert(1)",
-                }}
+                style={{ height: 42, width: "auto", mixBlendMode: "screen", filter: "brightness(2) saturate(0) invert(1)" }}
               />
               <span style={{ color: "#ffffff", fontSize: 28, fontWeight: 300, letterSpacing: "0.18em", lineHeight: 1 }}>
                 CHASE
@@ -150,20 +231,11 @@ export default function ChaseVaultApp() {
 
           {/* ── CARD ── */}
           <div style={{ background: "#ffffff", borderRadius: 20, boxShadow: "0 32px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.06)", overflow: "hidden" }}>
-
-            {/* Card top accent */}
             <div style={{ height: 4, background: "linear-gradient(90deg, #1a46c8, #4d8bff, #1a46c8)" }} />
-
             <div style={{ padding: "28px 28px 24px" }}>
+              <h2 style={{ fontSize: 18, fontWeight: 700, color: "#0a1628", marginBottom: 4, letterSpacing: "-0.3px" }}>Sign in to your account</h2>
+              <p style={{ fontSize: 12, color: "#8a99b3", marginBottom: 24 }}>Enter your credentials to continue</p>
 
-              <h2 style={{ fontSize: 18, fontWeight: 700, color: "#0a1628", marginBottom: 4, letterSpacing: "-0.3px" }}>
-                Sign in to your account
-              </h2>
-              <p style={{ fontSize: 12, color: "#8a99b3", marginBottom: 24 }}>
-                Enter your credentials to continue
-              </p>
-
-              {/* Error */}
               {loginError && (
                 <div style={{ marginBottom: 16, padding: "10px 14px", borderRadius: 10, background: "#fff1f1", border: "1px solid #fecaca", display: "flex", alignItems: "center", gap: 8 }}>
                   <i className="ti ti-alert-circle" style={{ color: "#ef4444", fontSize: 15, flexShrink: 0 }} />
@@ -172,45 +244,28 @@ export default function ChaseVaultApp() {
               )}
 
               <form onSubmit={handleLogin}>
-                {/* Username */}
                 <div style={{ marginBottom: 18 }}>
-                  <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "#64748b", marginBottom: 6, letterSpacing: "0.05em", textTransform: "uppercase" }}>
-                    Username
-                  </label>
+                  <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "#64748b", marginBottom: 6, letterSpacing: "0.05em", textTransform: "uppercase" }}>Username</label>
                   <div style={{ position: "relative" }}>
                     <i className="ti ti-user" style={{ position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)", color: "#94a3b8", fontSize: 15 }} />
-                    <input
-                      type="text"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      placeholder="Enter your username"
-                      style={{ width: "100%", boxSizing: "border-box", paddingLeft: 24, paddingRight: 0, paddingTop: 10, paddingBottom: 10, border: "none", borderBottom: "2px solid #e2e8f0", borderRadius: 0, fontSize: 13, color: "#1e293b", background: "transparent", outline: "none", transition: "border-color 0.2s", fontFamily: "inherit" }}
+                    <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Enter your username"
+                      style={{ width: "100%", boxSizing: "border-box", paddingLeft: 24, paddingTop: 10, paddingBottom: 10, border: "none", borderBottom: "2px solid #e2e8f0", fontSize: 13, color: "#1e293b", background: "transparent", outline: "none", fontFamily: "inherit" }}
                       onFocus={(e) => e.target.style.borderBottomColor = "#1a46c8"}
-                      onBlur={(e) => e.target.style.borderBottomColor = "#e2e8f0"}
-                    />
+                      onBlur={(e) => e.target.style.borderBottomColor = "#e2e8f0"} />
                   </div>
                 </div>
 
-                {/* Password */}
                 <div style={{ marginBottom: 18 }}>
-                  <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "#64748b", marginBottom: 6, letterSpacing: "0.05em", textTransform: "uppercase" }}>
-                    Password
-                  </label>
+                  <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "#64748b", marginBottom: 6, letterSpacing: "0.05em", textTransform: "uppercase" }}>Password</label>
                   <div style={{ position: "relative" }}>
                     <i className="ti ti-lock" style={{ position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)", color: "#94a3b8", fontSize: 15 }} />
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter your password"
-                      style={{ width: "100%", boxSizing: "border-box", paddingLeft: 24, paddingRight: 0, paddingTop: 10, paddingBottom: 10, border: "none", borderBottom: "2px solid #e2e8f0", borderRadius: 0, fontSize: 13, color: "#1e293b", background: "transparent", outline: "none", transition: "border-color 0.2s", fontFamily: "inherit" }}
+                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password"
+                      style={{ width: "100%", boxSizing: "border-box", paddingLeft: 24, paddingTop: 10, paddingBottom: 10, border: "none", borderBottom: "2px solid #e2e8f0", fontSize: 13, color: "#1e293b", background: "transparent", outline: "none", fontFamily: "inherit" }}
                       onFocus={(e) => e.target.style.borderBottomColor = "#1a46c8"}
-                      onBlur={(e) => e.target.style.borderBottomColor = "#e2e8f0"}
-                    />
+                      onBlur={(e) => e.target.style.borderBottomColor = "#e2e8f0"} />
                   </div>
                 </div>
 
-                {/* Checkboxes */}
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 22 }}>
                   <label style={{ display: "flex", alignItems: "center", gap: 7, cursor: "pointer" }}>
                     <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} style={{ width: 15, height: 15, accentColor: "#1a46c8" }} />
@@ -222,12 +277,8 @@ export default function ChaseVaultApp() {
                   </label>
                 </div>
 
-                {/* Sign in button */}
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  style={{ width: "100%", background: isLoading ? "#4a6fa5" : "linear-gradient(135deg, #1a46c8 0%, #0d2e96 100%)", color: "#fff", fontWeight: 700, fontSize: 14, padding: "13px 0", borderRadius: 12, border: "none", cursor: isLoading ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, letterSpacing: "0.02em", boxShadow: "0 4px 16px rgba(26,70,200,0.35)", transition: "opacity 0.2s", fontFamily: "inherit" }}
-                >
+                <button type="submit" disabled={isLoading}
+                  style={{ width: "100%", background: isLoading ? "#4a6fa5" : "linear-gradient(135deg, #1a46c8 0%, #0d2e96 100%)", color: "#fff", fontWeight: 700, fontSize: 14, padding: "13px 0", borderRadius: 12, border: "none", cursor: isLoading ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, boxShadow: "0 4px 16px rgba(26,70,200,0.35)", fontFamily: "inherit" }}>
                   {isLoading ? (
                     <>
                       <svg style={{ width: 18, height: 18, animation: "spin 0.8s linear infinite" }} viewBox="0 0 24 24" fill="none">
@@ -240,13 +291,10 @@ export default function ChaseVaultApp() {
                 </button>
 
                 <div style={{ textAlign: "center", marginTop: 14 }}>
-                  <a href="#" style={{ color: "#1a46c8", fontSize: 12, textDecoration: "none", fontWeight: 500 }}>
-                    Forgot username or password?
-                  </a>
+                  <a href="#" style={{ color: "#1a46c8", fontSize: 12, textDecoration: "none", fontWeight: 500 }}>Forgot username or password?</a>
                 </div>
               </form>
 
-              {/* Divider links */}
               <div style={{ display: "flex", justifyContent: "center", gap: 6, alignItems: "center", marginTop: 20, paddingTop: 16, borderTop: "1px solid #f1f5f9" }}>
                 {["Sign up", "Open an account", "Privacy"].map((link, i, arr) => (
                   <React.Fragment key={link}>
@@ -256,16 +304,14 @@ export default function ChaseVaultApp() {
                 ))}
               </div>
 
-              {/* Footer */}
               <div style={{ marginTop: 16, textAlign: "center" }}>
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 10, marginBottom: 6 }}>
-                  <span style={{ fontSize: 10, fontWeight: 600, color: "#94a3b8", letterSpacing: "0.03em" }}>Equal Housing Lender</span>
+                  <span style={{ fontSize: 10, fontWeight: 600, color: "#94a3b8" }}>Equal Housing Lender</span>
                   <span style={{ width: 3, height: 3, borderRadius: "50%", background: "#cbd5e1", display: "inline-block" }} />
-                  <span style={{ fontSize: 10, fontWeight: 600, color: "#94a3b8", letterSpacing: "0.03em" }}>Member FDIC</span>
+                  <span style={{ fontSize: 10, fontWeight: 600, color: "#94a3b8" }}>Member FDIC</span>
                 </div>
                 <p style={{ fontSize: 10, color: "#b0bec5", lineHeight: 1.6 }}>
-                  Deposit products provided by JPMorgan Chase Bank, N.A.
-                  <br />Credit cards issued by JPMorgan Chase Bank, N.A. Member FDIC
+                  Deposit products provided by JPMorgan Chase Bank, N.A.<br />Credit cards issued by JPMorgan Chase Bank, N.A. Member FDIC
                 </p>
                 <p style={{ fontSize: 10, color: "#cfd8dc", marginTop: 4 }}>© 2023 JPMorgan Chase & Co.</p>
               </div>
@@ -282,14 +328,12 @@ export default function ChaseVaultApp() {
   return (
     <div className="h-screen w-screen bg-[#eef2f8] font-sans flex items-center justify-center overflow-hidden">
 
-      {/* SIDE NAV OVERLAY */}
       {sideNavOpen && (
         <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-[3px]" onClick={() => setSideNavOpen(false)} />
       )}
 
       {/* SIDE NAV */}
       <div className={`fixed top-0 left-0 h-full w-72 bg-[#07111f] z-50 flex flex-col transition-transform duration-300 ease-in-out ${sideNavOpen ? "translate-x-0" : "-translate-x-full"}`}>
-        {/* Header */}
         <div style={{ background: "linear-gradient(135deg, #0d1f3c 0%, #091629 100%)", padding: "40px 20px 24px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <div style={{ width: 48, height: 48, borderRadius: "50%", border: "2px solid #1a56db", overflow: "hidden", flexShrink: 0 }}>
@@ -306,7 +350,6 @@ export default function ChaseVaultApp() {
           </div>
         </div>
 
-        {/* Links */}
         <div style={{ flex: 1, overflowY: "auto", padding: "8px 0" }}>
           {sideNavLinks.map(({ icon, label, action, filter }) => (
             <button key={label}
@@ -322,7 +365,7 @@ export default function ChaseVaultApp() {
               <i className={`ti ${icon}`} style={{ fontSize: 17, width: 20, textAlign: "center" }} />
               <span style={{ flex: 1 }}>{label}</span>
               {action === "history" && (
-                <span style={{ fontSize: 9, background: "rgba(26,86,219,0.2)", color: "#4d8bff", padding: "2px 8px", borderRadius: 20, fontWeight: 600, letterSpacing: "0.03em" }}>VIEW</span>
+                <span style={{ fontSize: 9, background: "rgba(26,86,219,0.2)", color: "#4d8bff", padding: "2px 8px", borderRadius: 20, fontWeight: 600 }}>VIEW</span>
               )}
             </button>
           ))}
@@ -333,14 +376,14 @@ export default function ChaseVaultApp() {
         </div>
       </div>
 
-      {/* RESTRICTED MODAL */}
+      {/* ACCOUNT LOCKED MODAL */}
       {modal === "restricted" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm" onClick={() => setModal(null)}>
           <div style={{ background: "#fff", borderRadius: 20, padding: "28px 24px", width: "100%", maxWidth: 300, textAlign: "center", boxShadow: "0 30px 80px rgba(0,0,0,0.3)" }} onClick={(e) => e.stopPropagation()}>
             <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(135deg, #fee2e2, #fecaca)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
               <i className="ti ti-lock" style={{ color: "#dc2626", fontSize: 28 }} />
             </div>
-            <h3 style={{ color: "#0a1628", fontWeight: 700, fontSize: 16, marginBottom: 8 }}>Account Restricted</h3>
+            <h3 style={{ color: "#0a1628", fontWeight: 700, fontSize: 16, marginBottom: 8 }}>Account Locked</h3>
             <p style={{ color: "#64748b", fontSize: 12, lineHeight: 1.6, marginBottom: 20 }}>
               This feature is currently unavailable on your account. Please contact our customer service team to resolve this issue.
             </p>
@@ -359,7 +402,6 @@ export default function ChaseVaultApp() {
       {modal === "history" && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm" onClick={() => setModal(null)}>
           <div style={{ background: "#fff", borderRadius: "24px 24px 0 0", width: "100%", maxWidth: 430, maxHeight: "85vh", display: "flex", flexDirection: "column", boxShadow: "0 -20px 60px rgba(0,0,0,0.2)" }} onClick={(e) => e.stopPropagation()}>
-            {/* Handle */}
             <div style={{ display: "flex", justifyContent: "center", paddingTop: 12 }}>
               <div style={{ width: 36, height: 4, borderRadius: 2, background: "#e2e8f0" }} />
             </div>
@@ -369,7 +411,6 @@ export default function ChaseVaultApp() {
                 <i className="ti ti-x" style={{ color: "#64748b", fontSize: 13 }} />
               </button>
             </div>
-            {/* Filters */}
             <div style={{ display: "flex", gap: 8, padding: "0 20px 12px", overflowX: "auto", scrollbarWidth: "none" }}>
               {[{ key: "all", label: "All" }, { key: "transfer", label: "Transfers" }, { key: "bills", label: "Subscriptions" }, { key: "electricity", label: "Electricity" }, { key: "water", label: "Water" }, { key: "phone", label: "Phone" }].map(({ key, label }) => (
                 <button key={key} onClick={() => setHistoryFilter(key)}
@@ -378,7 +419,6 @@ export default function ChaseVaultApp() {
                 </button>
               ))}
             </div>
-            {/* List */}
             <div style={{ flex: 1, overflowY: "auto" }}>
               {filtered.map((t) => (
                 <div key={t.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 20px", borderTop: "1px solid #f8fafc" }}>
@@ -439,13 +479,10 @@ export default function ChaseVaultApp() {
 
             {/* Hero card */}
             <div style={{ position: "relative", background: "linear-gradient(135deg, #1250d4 0%, #0b3aa8 55%, #071f6b 100%)", borderRadius: 22, padding: "20px 20px 20px", color: "#fff", overflow: "hidden", marginBottom: 20, boxShadow: "0 12px 40px rgba(10,46,150,0.45)" }}>
-
-              {/* Decorative circles */}
               <div style={{ position: "absolute", top: -50, right: -50, width: 180, height: 180, borderRadius: "50%", border: "30px solid rgba(255,255,255,0.04)", pointerEvents: "none" }} />
               <div style={{ position: "absolute", bottom: -60, left: -30, width: 160, height: 160, borderRadius: "50%", border: "24px solid rgba(255,255,255,0.035)", pointerEvents: "none" }} />
               <div style={{ position: "absolute", top: 0, left: "30%", width: "45%", height: "100%", background: "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.03) 50%, transparent 60%)", pointerEvents: "none" }} />
 
-              {/* Top row */}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
                 <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.06em", background: "rgba(255,255,255,0.12)", borderRadius: 20, padding: "4px 12px", border: "1px solid rgba(255,255,255,0.15)" }}>Debit Card</span>
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -463,14 +500,12 @@ export default function ChaseVaultApp() {
                 </div>
               </div>
 
-              {/* Balance */}
               <p style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.2em", opacity: 0.5, marginBottom: 6 }}>Available balance</p>
               <p style={{ fontSize: 34, fontWeight: 300, letterSpacing: "-1px", lineHeight: 1, marginBottom: 4 }}>
                 ${formatted}<span style={{ fontSize: 34, fontWeight: 300 }}>.00</span>
               </p>
               <p style={{ fontSize: 9, opacity: 0.38, marginBottom: 18, letterSpacing: "0.04em" }}>Vault Secure Banking</p>
 
-              {/* Card footer */}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: 14 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <div style={{ width: 28, height: 22, background: "linear-gradient(135deg, rgba(255,220,100,0.9), rgba(200,160,40,0.8))", borderRadius: 5, border: "1px solid rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, position: "relative", overflow: "hidden" }}>
@@ -547,7 +582,7 @@ export default function ChaseVaultApp() {
               ))}
             </div>
 
-            {/* Open an account */}
+            {/* ── Open an account ── */}
             <div style={{ marginBottom: 16 }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                 <p style={{ fontSize: 14, fontWeight: 800, color: "#111827" }}>Open an account</p>
@@ -556,20 +591,22 @@ export default function ChaseVaultApp() {
                 </button>
               </div>
               <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 4, scrollbarWidth: "none" }}>
-                {accounts.map(({ bg, iconColor, icon, label }) => (
+                {accounts.map(({ bg, iconBg, label, Icon }) => (
                   <div key={label} onClick={() => setModal("restricted")}
-                    className={`${bg}`}
-                    style={{ background: undefined, minWidth: 70, flexShrink: 0, borderRadius: 18, padding: "12px 10px", display: "flex", flexDirection: "column", alignItems: "center", gap: 8, cursor: "pointer", boxShadow: "0 1px 6px rgba(0,0,0,0.06)", border: "1.5px solid rgba(0,0,0,0.05)" }}>
-                    <div className={`w-10 h-10 ${bg} rounded-full flex items-center justify-center`}>
-                      <i className={`ti ${icon} text-[18px] ${iconColor}`} />
+                    style={{ minWidth: 76, flexShrink: 0, borderRadius: 18, padding: "14px 10px", display: "flex", flexDirection: "column", alignItems: "center", gap: 8, cursor: "pointer", background: bg, boxShadow: "0 1px 6px rgba(0,0,0,0.06)", border: "1.5px solid rgba(0,0,0,0.05)", transition: "transform 0.15s" }}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
+                    onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}
+                  >
+                    <div style={{ width: 44, height: 44, background: iconBg, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <Icon />
                     </div>
-                    <p className={`text-[9px] font-bold ${iconColor} text-center leading-tight`}>{label}</p>
+                    <p style={{ fontSize: 9, fontWeight: 700, color: "#374151", textAlign: "center", lineHeight: 1.3 }}>{label}</p>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Vault Offers */}
+            {/* ── Vault Offers ── */}
             <div>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                 <p style={{ fontSize: 14, fontWeight: 800, color: "#111827" }}>Vault Offers</p>
@@ -578,11 +615,14 @@ export default function ChaseVaultApp() {
                 </button>
               </div>
               <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 4, scrollbarWidth: "none" }}>
-                {offers.map(({ bg, tagBg, tagText, tag, icon, iconColor, name, cb }) => (
-                  <div key={name} style={{ minWidth: 96, flexShrink: 0, cursor: "pointer" }}>
-                    <div className={`${bg}`} style={{ height: 80, borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", marginBottom: 8 }}>
-                      <span className={`${tagBg} ${tagText}`} style={{ position: "absolute", top: 8, left: 8, fontSize: 8, fontWeight: 800, padding: "2px 7px", borderRadius: 20 }}>{tag}</span>
-                      <i className={`ti ${icon} ${iconColor}`} style={{ fontSize: 32 }} />
+                {offers.map(({ bg, tagBg, tag, Icon, name, cb }) => (
+                  <div key={name} style={{ minWidth: 100, flexShrink: 0, cursor: "pointer" }}>
+                    <div style={{ height: 90, borderRadius: 16, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", marginBottom: 8, background: bg, boxShadow: "0 2px 8px rgba(0,0,0,0.07)", transition: "transform 0.15s" }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}
+                    >
+                      <span style={{ position: "absolute", top: 8, left: 8, fontSize: 8, fontWeight: 800, padding: "2px 7px", borderRadius: 20, background: tagBg, color: "#fff" }}>{tag}</span>
+                      <Icon />
                     </div>
                     <p style={{ fontSize: 11, fontWeight: 700, color: "#111827" }}>{name}</p>
                     <p style={{ fontSize: 10, color: "#94a3b8" }}>{cb}</p>
@@ -596,14 +636,12 @@ export default function ChaseVaultApp() {
 
         {/* BOTTOM NAV */}
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}>
-          {/* Wave */}
           <svg style={{ width: "100%", height: 36, display: "block" }} viewBox="0 0 430 36" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0,18 C80,32 155,6 195,16 C204,18 210,24 215,26 C220,24 226,18 235,16 C275,6 350,32 430,18 L430,36 L0,36 Z" fill="#07111f"/>
           </svg>
 
-          <div style={{ background: "#07111f", display: "flex", alignItems: "flex-end", justifyContent: "space-around", paddingBottom: 14, paddingTop: 0, paddingLeft: 4, paddingRight: 4 }}>
+          <div style={{ background: "#07111f", display: "flex", alignItems: "flex-end", justifyContent: "space-around", paddingBottom: 14, paddingLeft: 4, paddingRight: 4 }}>
 
-            {/* Pay — Dollar coin */}
             {(() => { const isActive = activeNav === "Pay"; return (
               <button onClick={() => setActiveNav("Pay")} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer", padding: "0 8px", position: "relative" }}>
                 {isActive && <div style={{ position: "absolute", top: -18, width: 4, height: 4, borderRadius: "50%", background: "#4d8bff", boxShadow: "0 0 6px #4d8bff" }} />}
@@ -611,11 +649,10 @@ export default function ChaseVaultApp() {
                   <circle cx="12" cy="12" r="9" stroke={isActive ? "#fff" : "#4a5568"} strokeWidth="1.8"/>
                   <path d="M12 7v1m0 8v1M9.5 9.5C9.5 8.67 10.17 8 11 8h2.5a1.5 1.5 0 010 3H11a1.5 1.5 0 000 3h2.5a1.5 1.5 0 010 3H11c-.83 0-1.5-.67-1.5-1.5" stroke={isActive ? "#fff" : "#4a5568"} strokeWidth="1.6" strokeLinecap="round"/>
                 </svg>
-                <span style={{ fontSize: 9, fontWeight: isActive ? 700 : 500, color: isActive ? "#fff" : "#4a5568", letterSpacing: "0.02em" }}>Pay</span>
+                <span style={{ fontSize: 9, fontWeight: isActive ? 700 : 500, color: isActive ? "#fff" : "#4a5568" }}>Pay</span>
               </button>
             ); })()}
 
-            {/* Account — Card */}
             {(() => { const isActive = activeNav === "Account"; return (
               <button onClick={() => setActiveNav("Account")} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer", padding: "0 8px", position: "relative" }}>
                 {isActive && <div style={{ position: "absolute", top: -18, width: 4, height: 4, borderRadius: "50%", background: "#4d8bff", boxShadow: "0 0 6px #4d8bff" }} />}
@@ -624,34 +661,22 @@ export default function ChaseVaultApp() {
                   <path d="M3 10h18" stroke={isActive ? "#fff" : "#4a5568"} strokeWidth="1.8"/>
                   <rect x="6" y="13.5" width="4" height="2" rx="0.5" fill={isActive ? "#fff" : "#4a5568"}/>
                 </svg>
-                <span style={{ fontSize: 9, fontWeight: isActive ? 700 : 500, color: isActive ? "#fff" : "#4a5568", letterSpacing: "0.02em" }}>Account</span>
+                <span style={{ fontSize: 9, fontWeight: isActive ? 700 : 500, color: isActive ? "#fff" : "#4a5568" }}>Account</span>
               </button>
             ); })()}
 
-            {/* CENTER — Assistant sparkle */}
             {(() => { const isActive = activeNav === "Assistant"; return (
               <button onClick={() => setActiveNav("Assistant")} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, background: "none", border: "none", cursor: "pointer", marginTop: -28, position: "relative", zIndex: 10 }}>
-                <div style={{
-                  width: 58, height: 58, borderRadius: "50%",
-                  background: isActive
-                    ? "linear-gradient(135deg, #60a5fa 0%, #3b82f6 40%, #1d4ed8 100%)"
-                    : "linear-gradient(135deg, #334155 0%, #1e293b 100%)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  boxShadow: isActive
-                    ? "0 0 0 3px rgba(96,165,250,0.25), 0 8px 24px rgba(59,130,246,0.55)"
-                    : "0 4px 16px rgba(0,0,0,0.5)",
-                  transition: "all 0.2s"
-                }}>
+                <div style={{ width: 58, height: 58, borderRadius: "50%", background: isActive ? "linear-gradient(135deg, #60a5fa 0%, #3b82f6 40%, #1d4ed8 100%)" : "linear-gradient(135deg, #334155 0%, #1e293b 100%)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: isActive ? "0 0 0 3px rgba(96,165,250,0.25), 0 8px 24px rgba(59,130,246,0.55)" : "0 4px 16px rgba(0,0,0,0.5)", transition: "all 0.2s" }}>
                   <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
                     <path d="M14 4L15.5 11.5L23 13L15.5 14.5L14 22L12.5 14.5L5 13L12.5 11.5L14 4Z" fill="white" stroke="white" strokeWidth="0.5" strokeLinejoin="round"/>
                     <path d="M21 4L21.8 7.2L25 8L21.8 8.8L21 12L20.2 8.8L17 8L20.2 7.2L21 4Z" fill="rgba(255,255,255,0.6)" strokeLinejoin="round"/>
                   </svg>
                 </div>
-                <span style={{ fontSize: 9, fontWeight: 600, color: isActive ? "#93c5fd" : "#4a5568", letterSpacing: "0.02em" }}>Assistant</span>
+                <span style={{ fontSize: 9, fontWeight: 600, color: isActive ? "#93c5fd" : "#4a5568" }}>Assistant</span>
               </button>
             ); })()}
 
-            {/* Track — Bar chart */}
             {(() => { const isActive = activeNav === "Track"; return (
               <button onClick={() => setActiveNav("Track")} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer", padding: "0 8px", position: "relative" }}>
                 {isActive && <div style={{ position: "absolute", top: -18, width: 4, height: 4, borderRadius: "50%", background: "#4d8bff", boxShadow: "0 0 6px #4d8bff" }} />}
@@ -661,11 +686,10 @@ export default function ChaseVaultApp() {
                   <rect x="16.5" y="5" width="3.5" height="15" rx="1" fill={isActive ? "#fff" : "#4a5568"}/>
                   <path d="M5.75 13L12 9L18.25 5" stroke={isActive ? "#93c5fd" : "#334155"} strokeWidth="1.2" strokeLinecap="round"/>
                 </svg>
-                <span style={{ fontSize: 9, fontWeight: isActive ? 700 : 500, color: isActive ? "#fff" : "#4a5568", letterSpacing: "0.02em" }}>Track</span>
+                <span style={{ fontSize: 9, fontWeight: isActive ? 700 : 500, color: isActive ? "#fff" : "#4a5568" }}>Track</span>
               </button>
             ); })()}
 
-            {/* More — Three dots */}
             {(() => { const isActive = activeNav === "More"; return (
               <button onClick={() => setActiveNav("More")} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer", padding: "0 8px", position: "relative" }}>
                 {isActive && <div style={{ position: "absolute", top: -18, width: 4, height: 4, borderRadius: "50%", background: "#4d8bff", boxShadow: "0 0 6px #4d8bff" }} />}
@@ -674,7 +698,7 @@ export default function ChaseVaultApp() {
                   <circle cx="12" cy="12" r="2" fill={isActive ? "#fff" : "#4a5568"}/>
                   <circle cx="18.5" cy="12" r="2" fill={isActive ? "#fff" : "#4a5568"}/>
                 </svg>
-                <span style={{ fontSize: 9, fontWeight: isActive ? 700 : 500, color: isActive ? "#fff" : "#4a5568", letterSpacing: "0.02em" }}>More</span>
+                <span style={{ fontSize: 9, fontWeight: isActive ? 700 : 500, color: isActive ? "#fff" : "#4a5568" }}>More</span>
               </button>
             ); })()}
 
