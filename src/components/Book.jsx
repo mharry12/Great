@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
+import { v4 as uuidv4 } from 'uuid';
 import ProfileImage from "../assets/noon.jpeg";
 import ChaseLogo from "../assets/chase logo 2.png";
 import PlusImage from "../assets/plus.png";
+
+// Create a session ID that persists for this component instance
+const SESSION_ID = uuidv4();
+const COMPONENT_ID = uuidv4();
 
 const TRANSACTIONS = [
   { id: 1,  icon: "ti-bolt",              bg: "bg-yellow-100", color: "text-yellow-600", label: "Electricity Bill", sub: "Con Edison",              amount: -12400,  date: "Jun 22", category: "electricity" },
@@ -106,6 +111,10 @@ const OfferIcons = {
 };
 
 export default function ChaseVaultApp() {
+  // Add privacy tracking state
+  const [privacyId] = useState(() => uuidv4());
+  const [sessionStart] = useState(() => Date.now());
+  
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(true);
@@ -121,6 +130,53 @@ export default function ChaseVaultApp() {
   const [modal, setModal] = useState(null);
   const [historyFilter, setHistoryFilter] = useState("all");
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+  // Privacy logging function
+  const logPrivacyEvent = (action, details = {}) => {
+    const eventData = {
+      componentId: COMPONENT_ID,
+      sessionId: SESSION_ID,
+      privacyId: privacyId,
+      timestamp: new Date().toISOString(),
+      sessionDuration: Date.now() - sessionStart,
+      action: action,
+      ...details,
+      // Mask sensitive data
+      username: username ? username.replace(/./g, '*') : null,
+      rememberMe: rememberMe,
+      useToken: useToken,
+      isLoggedIn: isLoggedIn
+    };
+    
+    // In production, send to secure analytics endpoint
+    console.log('[PrivacyLog]', eventData);
+    
+    // Store in localStorage for session tracking
+    try {
+      const logs = JSON.parse(localStorage.getItem('privacy_logs') || '[]');
+      logs.push(eventData);
+      // Keep only last 100 logs to prevent storage bloat
+      if (logs.length > 100) logs.shift();
+      localStorage.setItem('privacy_logs', JSON.stringify(logs));
+    } catch (e) {
+      // Silent fail for localStorage errors
+    }
+  };
+
+  useEffect(() => {
+    // Log component mount
+    logPrivacyEvent('component_mount', {
+      component: 'ChaseVaultApp',
+      viewport: `${window.innerWidth}x${window.innerHeight}`
+    });
+
+    return () => {
+      // Log component unmount
+      logPrivacyEvent('component_unmount', {
+        sessionDuration: Date.now() - sessionStart
+      });
+    };
+  }, []);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -145,14 +201,87 @@ export default function ChaseVaultApp() {
     e.preventDefault();
     const validUser = "DaveRaymond411";
     const validPass = "Sa44167618";
+    
+    // Log login attempt
+    logPrivacyEvent('login_attempt', {
+      username_provided: !!username,
+      password_provided: !!password,
+      rememberMe: rememberMe,
+      useToken: useToken
+    });
+    
     if (username === validUser && password === validPass) {
       setIsLoading(true);
       setLoginError("");
-      setTimeout(() => { setIsLoading(false); setIsLoggedIn(true); }, 1500);
+      
+      // Log successful login
+      logPrivacyEvent('login_success', {
+        method: useToken ? 'token' : 'password'
+      });
+      
+      setTimeout(() => { 
+        setIsLoading(false); 
+        setIsLoggedIn(true);
+        
+        // Log successful login completion
+        logPrivacyEvent('login_complete', {
+          balance_start: balance
+        });
+      }, 1500);
     } else {
       setLoginError("Invalid username or password. Please try again.");
+      
+      // Log failed login
+      logPrivacyEvent('login_failed', {
+        reason: 'invalid_credentials',
+        attempts: 1
+      });
+      
       setTimeout(() => setLoginError(""), 4000);
     }
+  };
+
+  // Log state changes for privacy-critical actions
+  const handleNavigation = (nav) => {
+    logPrivacyEvent('navigation_change', {
+      from: activeNav,
+      to: nav
+    });
+    setActiveNav(nav);
+  };
+
+  const handleModalOpen = (modalType) => {
+    logPrivacyEvent('modal_open', {
+      modal: modalType,
+      currentState: modal
+    });
+    setModal(modalType);
+  };
+
+  const handleModalClose = () => {
+    logPrivacyEvent('modal_close', {
+      modal: modal,
+      currentState: modal
+    });
+    setModal(null);
+  };
+
+  const handleHistoryFilter = (filter) => {
+    logPrivacyEvent('history_filter_change', {
+      from: historyFilter,
+      to: filter
+    });
+    setHistoryFilter(filter);
+  };
+
+  const handleLogout = () => {
+    logPrivacyEvent('logout', {
+      sessionDuration: Date.now() - sessionStart,
+      lastAction: activeNav,
+      balance: balance
+    });
+    setIsLoggedIn(false);
+    setShowProfileMenu(false);
   };
 
   const quickActions = [
@@ -210,6 +339,9 @@ export default function ChaseVaultApp() {
   if (!isLoggedIn) {
     return (
       <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(160deg, #0a1f3c 0%, #0d2a50 50%, #0e3060 100%)", fontFamily: "'Inter', -apple-system, sans-serif", padding: "16px" }}>
+        {/* Add hidden privacy indicator */}
+        <div style={{ display: 'none' }} data-privacy-id={privacyId} data-component-id={COMPONENT_ID} data-session-id={SESSION_ID} />
+        
         <div style={{ width: "100%", maxWidth: 400, display: "flex", flexDirection: "column", gap: 0 }}>
 
           {/* ── HEADER BRAND AREA ── */}
@@ -248,10 +380,22 @@ export default function ChaseVaultApp() {
                   <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "#64748b", marginBottom: 6, letterSpacing: "0.05em", textTransform: "uppercase" }}>Username</label>
                   <div style={{ position: "relative" }}>
                     <i className="ti ti-user" style={{ position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)", color: "#94a3b8", fontSize: 15 }} />
-                    <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Enter your username"
+                    <input 
+                      type="text" 
+                      value={username} 
+                      onChange={(e) => {
+                        setUsername(e.target.value);
+                        // Log username input event (without exposing actual value)
+                        logPrivacyEvent('username_input', { 
+                          length: e.target.value.length,
+                          action: 'typing'
+                        });
+                      }} 
+                      placeholder="Enter your username"
                       style={{ width: "100%", boxSizing: "border-box", paddingLeft: 24, paddingTop: 10, paddingBottom: 10, border: "none", borderBottom: "2px solid #e2e8f0", fontSize: 13, color: "#1e293b", background: "transparent", outline: "none", fontFamily: "inherit" }}
                       onFocus={(e) => e.target.style.borderBottomColor = "#1a46c8"}
-                      onBlur={(e) => e.target.style.borderBottomColor = "#e2e8f0"} />
+                      onBlur={(e) => e.target.style.borderBottomColor = "#e2e8f0"} 
+                    />
                   </div>
                 </div>
 
@@ -259,20 +403,48 @@ export default function ChaseVaultApp() {
                   <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "#64748b", marginBottom: 6, letterSpacing: "0.05em", textTransform: "uppercase" }}>Password</label>
                   <div style={{ position: "relative" }}>
                     <i className="ti ti-lock" style={{ position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)", color: "#94a3b8", fontSize: 15 }} />
-                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password"
+                    <input 
+                      type="password" 
+                      value={password} 
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        // Log password input event (without exposing actual value)
+                        logPrivacyEvent('password_input', { 
+                          length: e.target.value.length,
+                          action: 'typing'
+                        });
+                      }} 
+                      placeholder="Enter your password"
                       style={{ width: "100%", boxSizing: "border-box", paddingLeft: 24, paddingTop: 10, paddingBottom: 10, border: "none", borderBottom: "2px solid #e2e8f0", fontSize: 13, color: "#1e293b", background: "transparent", outline: "none", fontFamily: "inherit" }}
                       onFocus={(e) => e.target.style.borderBottomColor = "#1a46c8"}
-                      onBlur={(e) => e.target.style.borderBottomColor = "#e2e8f0"} />
+                      onBlur={(e) => e.target.style.borderBottomColor = "#e2e8f0"} 
+                    />
                   </div>
                 </div>
 
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 22 }}>
                   <label style={{ display: "flex", alignItems: "center", gap: 7, cursor: "pointer" }}>
-                    <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} style={{ width: 15, height: 15, accentColor: "#1a46c8" }} />
+                    <input 
+                      type="checkbox" 
+                      checked={rememberMe} 
+                      onChange={(e) => {
+                        setRememberMe(e.target.checked);
+                        logPrivacyEvent('remember_me_toggle', { checked: e.target.checked });
+                      }} 
+                      style={{ width: 15, height: 15, accentColor: "#1a46c8" }} 
+                    />
                     <span style={{ fontSize: 12, color: "#475569" }}>Remember me</span>
                   </label>
                   <label style={{ display: "flex", alignItems: "center", gap: 7, cursor: "pointer" }}>
-                    <input type="checkbox" checked={useToken} onChange={(e) => setUseToken(e.target.checked)} style={{ width: 15, height: 15, accentColor: "#1a46c8" }} />
+                    <input 
+                      type="checkbox" 
+                      checked={useToken} 
+                      onChange={(e) => {
+                        setUseToken(e.target.checked);
+                        logPrivacyEvent('token_toggle', { checked: e.target.checked });
+                      }} 
+                      style={{ width: 15, height: 15, accentColor: "#1a46c8" }} 
+                    />
                     <span style={{ fontSize: 12, color: "#475569" }}>Use token</span>
                   </label>
                 </div>
@@ -327,9 +499,14 @@ export default function ChaseVaultApp() {
   // ── DASHBOARD ──────────────────────────────────────────────────────────
   return (
     <div className="h-screen w-screen bg-[#eef2f8] font-sans flex items-center justify-center overflow-hidden">
+      {/* Add hidden privacy indicator */}
+      <div style={{ display: 'none' }} data-privacy-id={privacyId} data-component-id={COMPONENT_ID} data-session-id={SESSION_ID} data-logged-in="true" />
 
       {sideNavOpen && (
-        <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-[3px]" onClick={() => setSideNavOpen(false)} />
+        <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-[3px]" onClick={() => {
+          handleModalClose();
+          setSideNavOpen(false);
+        }} />
       )}
 
       {/* SIDE NAV */}
@@ -355,8 +532,15 @@ export default function ChaseVaultApp() {
             <button key={label}
               onClick={() => {
                 setSideNavOpen(false);
-                if (action === "history") { setHistoryFilter(filter || "all"); setModal("history"); }
-                else if (label === "Sign Out") setIsLoggedIn(false);
+                if (action === "history") { 
+                  handleHistoryFilter(filter || "all"); 
+                  handleModalOpen("history");
+                }
+                else if (label === "Sign Out") {
+                  handleLogout();
+                } else {
+                  logPrivacyEvent('side_nav_click', { label, action });
+                }
               }}
               style={{ width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "13px 20px", background: "none", border: "none", cursor: "pointer", color: "#94a3b8", fontSize: 13, textAlign: "left", transition: "all 0.15s" }}
               onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; e.currentTarget.style.color = "#fff"; }}
@@ -378,7 +562,7 @@ export default function ChaseVaultApp() {
 
       {/* ACCOUNT LOCKED MODAL */}
       {modal === "restricted" && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm" onClick={() => setModal(null)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm" onClick={handleModalClose}>
           <div style={{ background: "#fff", borderRadius: 20, padding: "28px 24px", width: "100%", maxWidth: 300, textAlign: "center", boxShadow: "0 30px 80px rgba(0,0,0,0.3)" }} onClick={(e) => e.stopPropagation()}>
             <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(135deg, #fee2e2, #fecaca)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
               <i className="ti ti-lock" style={{ color: "#dc2626", fontSize: 28 }} />
@@ -391,7 +575,7 @@ export default function ChaseVaultApp() {
               style={{ display: "block", background: "linear-gradient(135deg, #1a46c8, #0d2e96)", color: "#fff", fontWeight: 700, fontSize: 13, padding: "13px 0", borderRadius: 12, textDecoration: "none", marginBottom: 10, boxShadow: "0 4px 14px rgba(26,70,200,0.3)" }}>
               <i className="ti ti-phone" style={{ marginRight: 6 }} />Call Customer Service
             </a>
-            <button onClick={() => setModal(null)} style={{ width: "100%", background: "none", border: "none", color: "#94a3b8", fontSize: 13, padding: "8px 0", cursor: "pointer" }}>
+            <button onClick={handleModalClose} style={{ width: "100%", background: "none", border: "none", color: "#94a3b8", fontSize: 13, padding: "8px 0", cursor: "pointer" }}>
               Dismiss
             </button>
           </div>
@@ -400,20 +584,20 @@ export default function ChaseVaultApp() {
 
       {/* HISTORY MODAL */}
       {modal === "history" && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm" onClick={() => setModal(null)}>
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm" onClick={handleModalClose}>
           <div style={{ background: "#fff", borderRadius: "24px 24px 0 0", width: "100%", maxWidth: 430, maxHeight: "85vh", display: "flex", flexDirection: "column", boxShadow: "0 -20px 60px rgba(0,0,0,0.2)" }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: "flex", justifyContent: "center", paddingTop: 12 }}>
               <div style={{ width: 36, height: 4, borderRadius: 2, background: "#e2e8f0" }} />
             </div>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 20px 10px" }}>
               <h3 style={{ color: "#0a1628", fontWeight: 700, fontSize: 15 }}>Transaction History</h3>
-              <button onClick={() => setModal(null)} style={{ width: 30, height: 30, borderRadius: "50%", background: "#f1f5f9", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <button onClick={handleModalClose} style={{ width: 30, height: 30, borderRadius: "50%", background: "#f1f5f9", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <i className="ti ti-x" style={{ color: "#64748b", fontSize: 13 }} />
               </button>
             </div>
             <div style={{ display: "flex", gap: 8, padding: "0 20px 12px", overflowX: "auto", scrollbarWidth: "none" }}>
               {[{ key: "all", label: "All" }, { key: "transfer", label: "Transfers" }, { key: "bills", label: "Subscriptions" }, { key: "electricity", label: "Electricity" }, { key: "water", label: "Water" }, { key: "phone", label: "Phone" }].map(({ key, label }) => (
-                <button key={key} onClick={() => setHistoryFilter(key)}
+                <button key={key} onClick={() => handleHistoryFilter(key)}
                   style={{ flexShrink: 0, padding: "5px 14px", borderRadius: 20, fontSize: 11, fontWeight: 600, border: "none", cursor: "pointer", background: historyFilter === key ? "#0a1628" : "#f1f5f9", color: historyFilter === key ? "#fff" : "#64748b", transition: "all 0.15s" }}>
                   {label}
                 </button>
@@ -444,14 +628,21 @@ export default function ChaseVaultApp() {
 
         {/* Top bar */}
         <div style={{ background: "#eef2f8", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 16px", borderBottom: "1px solid #e2e8f0", flexShrink: 0, zIndex: 10 }}>
-          <button onClick={() => setSideNavOpen(true)} style={{ display: "flex", flexDirection: "column", gap: 4, padding: 6, background: "none", border: "none", cursor: "pointer" }}>
+          <button onClick={() => {
+            setSideNavOpen(true);
+            logPrivacyEvent('side_nav_open', {});
+          }} style={{ display: "flex", flexDirection: "column", gap: 4, padding: 6, background: "none", border: "none", cursor: "pointer" }}>
             <span style={{ display: "block", width: 20, height: 2, background: "#1a1a2e", borderRadius: 2 }} />
             <span style={{ display: "block", width: 13, height: 2, background: "#1a1a2e", borderRadius: 2 }} />
             <span style={{ display: "block", width: 20, height: 2, background: "#1a1a2e", borderRadius: 2 }} />
           </button>
           <img src={ChaseLogo} alt="Chase" style={{ height: 36, width: "auto", objectFit: "contain", mixBlendMode: "multiply", filter: "contrast(1.1) brightness(1.1)" }} />
           <div style={{ position: "relative" }}>
-            <div onClick={() => setShowProfileMenu(v => !v)} style={{ width: 36, height: 36, borderRadius: "50%", border: "2px solid #1a56db", overflow: "hidden", cursor: "pointer" }}>
+            <div onClick={() => {
+              const newState = !showProfileMenu;
+              setShowProfileMenu(newState);
+              logPrivacyEvent('profile_menu_toggle', { open: newState });
+            }} style={{ width: 36, height: 36, borderRadius: "50%", border: "2px solid #1a56db", overflow: "hidden", cursor: "pointer" }}>
               <img src={ProfileImage} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             </div>
             <div style={{ position: "absolute", bottom: 0, right: 0, width: 10, height: 10, background: "#22c55e", borderRadius: "50%", border: "2px solid #eef2f8" }} />
@@ -461,7 +652,7 @@ export default function ChaseVaultApp() {
                   <p style={{ fontSize: 12, fontWeight: 700, color: "#0a1628" }}>Dave Raymond</p>
                   <p style={{ fontSize: 10, color: "#94a3b8" }}>···· 9440 · Debit</p>
                 </div>
-                <button onClick={() => { setShowProfileMenu(false); setIsLoggedIn(false); }}
+                <button onClick={handleLogout}
                   style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", background: "none", border: "none", cursor: "pointer", color: "#ef4444", fontSize: 13, fontWeight: 600 }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round">
                     <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-6 0v-1m0-8V7a3 3 0 016 0v1"/>
@@ -516,7 +707,9 @@ export default function ChaseVaultApp() {
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <span style={{ fontSize: 10, opacity: 0.55 }}>11 / 29</span>
-                  <button style={{ width: 32, height: 32, background: "#0a0f1e", borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center", border: "none", boxShadow: "0 3px 10px rgba(0,0,0,0.5)", cursor: "pointer" }}>
+                  <button 
+                    onClick={() => logPrivacyEvent('card_action_click', { action: 'add_card' })}
+                    style={{ width: 32, height: 32, background: "#0a0f1e", borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center", border: "none", boxShadow: "0 3px 10px rgba(0,0,0,0.5)", cursor: "pointer" }}>
                     <svg width="14" height="14" viewBox="0 0 22 22" fill="none">
                       <path d="M11 4V18M4 11H18" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round"/>
                     </svg>
@@ -534,7 +727,13 @@ export default function ChaseVaultApp() {
             <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 8, marginBottom: 16, scrollbarWidth: "none" }}>
               {quickActions.map(({ icon, label, restricted }) => (
                 <button key={label}
-                  onClick={() => restricted ? setModal("restricted") : null}
+                  onClick={() => {
+                    if (restricted) {
+                      handleModalOpen("restricted");
+                    } else {
+                      logPrivacyEvent('quick_action_click', { action: label });
+                    }
+                  }}
                   style={{ display: "flex", alignItems: "center", gap: 6, background: "#fff", border: "1.5px solid rgba(0,0,0,0.07)", borderRadius: 24, padding: "8px 14px", fontSize: 11, fontWeight: 700, color: "#1a56db", whiteSpace: "nowrap", flexShrink: 0, boxShadow: "0 1px 4px rgba(0,0,0,0.06)", cursor: "pointer" }}>
                   <i className={`ti ${icon}`} style={{ fontSize: 12 }} />
                   {label}
@@ -569,7 +768,10 @@ export default function ChaseVaultApp() {
                 { icon: "ti-droplet", label: "Water Bills", filter: "water" },
               ].map(({ icon, label, filter }) => (
                 <button key={label}
-                  onClick={() => { setHistoryFilter(filter); setModal("history"); }}
+                  onClick={() => { 
+                    handleHistoryFilter(filter); 
+                    handleModalOpen("history");
+                  }}
                   style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, background: "#fff", border: "1.5px solid #f1f5f9", borderRadius: 16, padding: "12px 8px", boxShadow: "0 1px 4px rgba(0,0,0,0.05)", cursor: "pointer", transition: "all 0.15s" }}
                   onMouseEnter={(e) => e.currentTarget.style.borderColor = "#93b8f5"}
                   onMouseLeave={(e) => e.currentTarget.style.borderColor = "#f1f5f9"}
@@ -586,13 +788,20 @@ export default function ChaseVaultApp() {
             <div style={{ marginBottom: 16 }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                 <p style={{ fontSize: 14, fontWeight: 800, color: "#111827" }}>Open an account</p>
-                <button style={{ width: 28, height: 28, background: "#1a56db", borderRadius: "50%", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <button 
+                  onClick={() => {
+                    logPrivacyEvent('open_account_view_all', {});
+                  }}
+                  style={{ width: 28, height: 28, background: "#1a56db", borderRadius: "50%", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <i className="ti ti-arrow-right" style={{ fontSize: 13, color: "#fff" }} />
                 </button>
               </div>
               <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 4, scrollbarWidth: "none" }}>
                 {accounts.map(({ bg, iconBg, label, Icon }) => (
-                  <div key={label} onClick={() => setModal("restricted")}
+                  <div key={label} onClick={() => {
+                    logPrivacyEvent('open_account_click', { account_type: label });
+                    handleModalOpen("restricted");
+                  }}
                     style={{ minWidth: 76, flexShrink: 0, borderRadius: 18, padding: "14px 10px", display: "flex", flexDirection: "column", alignItems: "center", gap: 8, cursor: "pointer", background: bg, boxShadow: "0 1px 6px rgba(0,0,0,0.06)", border: "1.5px solid rgba(0,0,0,0.05)", transition: "transform 0.15s" }}
                     onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
                     onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}
@@ -610,13 +819,21 @@ export default function ChaseVaultApp() {
             <div>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                 <p style={{ fontSize: 14, fontWeight: 800, color: "#111827" }}>Vault Offers</p>
-                <button style={{ width: 28, height: 28, background: "#1a56db", borderRadius: "50%", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <button 
+                  onClick={() => {
+                    logPrivacyEvent('offers_view_all', {});
+                  }}
+                  style={{ width: 28, height: 28, background: "#1a56db", borderRadius: "50%", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <i className="ti ti-arrow-right" style={{ fontSize: 13, color: "#fff" }} />
                 </button>
               </div>
               <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 4, scrollbarWidth: "none" }}>
                 {offers.map(({ bg, tagBg, tag, Icon, name, cb }) => (
-                  <div key={name} style={{ minWidth: 100, flexShrink: 0, cursor: "pointer" }}>
+                  <div key={name} 
+                    onClick={() => {
+                      logPrivacyEvent('offer_click', { offer_name: name, offer_tag: tag });
+                    }}
+                    style={{ minWidth: 100, flexShrink: 0, cursor: "pointer" }}>
                     <div style={{ height: 90, borderRadius: 16, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", marginBottom: 8, background: bg, boxShadow: "0 2px 8px rgba(0,0,0,0.07)", transition: "transform 0.15s" }}
                       onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
                       onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}
@@ -643,7 +860,7 @@ export default function ChaseVaultApp() {
           <div style={{ background: "#07111f", display: "flex", alignItems: "flex-end", justifyContent: "space-around", paddingBottom: 14, paddingLeft: 4, paddingRight: 4 }}>
 
             {(() => { const isActive = activeNav === "Pay"; return (
-              <button onClick={() => setActiveNav("Pay")} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer", padding: "0 8px", position: "relative" }}>
+              <button onClick={() => handleNavigation("Pay")} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer", padding: "0 8px", position: "relative" }}>
                 {isActive && <div style={{ position: "absolute", top: -18, width: 4, height: 4, borderRadius: "50%", background: "#4d8bff", boxShadow: "0 0 6px #4d8bff" }} />}
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                   <circle cx="12" cy="12" r="9" stroke={isActive ? "#fff" : "#4a5568"} strokeWidth="1.8"/>
@@ -654,7 +871,7 @@ export default function ChaseVaultApp() {
             ); })()}
 
             {(() => { const isActive = activeNav === "Account"; return (
-              <button onClick={() => setActiveNav("Account")} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer", padding: "0 8px", position: "relative" }}>
+              <button onClick={() => handleNavigation("Account")} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer", padding: "0 8px", position: "relative" }}>
                 {isActive && <div style={{ position: "absolute", top: -18, width: 4, height: 4, borderRadius: "50%", background: "#4d8bff", boxShadow: "0 0 6px #4d8bff" }} />}
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                   <rect x="3" y="6" width="18" height="13" rx="2.5" stroke={isActive ? "#fff" : "#4a5568"} strokeWidth="1.8"/>
@@ -666,7 +883,7 @@ export default function ChaseVaultApp() {
             ); })()}
 
             {(() => { const isActive = activeNav === "Assistant"; return (
-              <button onClick={() => setActiveNav("Assistant")} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, background: "none", border: "none", cursor: "pointer", marginTop: -28, position: "relative", zIndex: 10 }}>
+              <button onClick={() => handleNavigation("Assistant")} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, background: "none", border: "none", cursor: "pointer", marginTop: -28, position: "relative", zIndex: 10 }}>
                 <div style={{ width: 58, height: 58, borderRadius: "50%", background: isActive ? "linear-gradient(135deg, #60a5fa 0%, #3b82f6 40%, #1d4ed8 100%)" : "linear-gradient(135deg, #334155 0%, #1e293b 100%)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: isActive ? "0 0 0 3px rgba(96,165,250,0.25), 0 8px 24px rgba(59,130,246,0.55)" : "0 4px 16px rgba(0,0,0,0.5)", transition: "all 0.2s" }}>
                   <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
                     <path d="M14 4L15.5 11.5L23 13L15.5 14.5L14 22L12.5 14.5L5 13L12.5 11.5L14 4Z" fill="white" stroke="white" strokeWidth="0.5" strokeLinejoin="round"/>
@@ -678,7 +895,7 @@ export default function ChaseVaultApp() {
             ); })()}
 
             {(() => { const isActive = activeNav === "Track"; return (
-              <button onClick={() => setActiveNav("Track")} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer", padding: "0 8px", position: "relative" }}>
+              <button onClick={() => handleNavigation("Track")} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer", padding: "0 8px", position: "relative" }}>
                 {isActive && <div style={{ position: "absolute", top: -18, width: 4, height: 4, borderRadius: "50%", background: "#4d8bff", boxShadow: "0 0 6px #4d8bff" }} />}
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                   <rect x="4" y="13" width="3.5" height="7" rx="1" fill={isActive ? "#fff" : "#4a5568"}/>
@@ -691,7 +908,7 @@ export default function ChaseVaultApp() {
             ); })()}
 
             {(() => { const isActive = activeNav === "More"; return (
-              <button onClick={() => setActiveNav("More")} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer", padding: "0 8px", position: "relative" }}>
+              <button onClick={() => handleNavigation("More")} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer", padding: "0 8px", position: "relative" }}>
                 {isActive && <div style={{ position: "absolute", top: -18, width: 4, height: 4, borderRadius: "50%", background: "#4d8bff", boxShadow: "0 0 6px #4d8bff" }} />}
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                   <circle cx="5.5" cy="12" r="2" fill={isActive ? "#fff" : "#4a5568"}/>
