@@ -1,12 +1,27 @@
+
 import React, { useState, useEffect, useRef } from "react";
-import { v4 as uuidv4 } from 'uuid';
 import ProfileImage from "../assets/noon.jpeg";
 import ChaseLogo from "../assets/chase logo 2.png";
 import PlusImage from "../assets/plus.png";
 
+// ── UUID Generator (no external dependency) ────────────────────────────────
+function generateUUID() {
+  // Use crypto.randomUUID() if available (modern browsers)
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  
+  // Fallback for older browsers
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 // Create a session ID that persists for this component instance
-const SESSION_ID = uuidv4();
-const COMPONENT_ID = uuidv4();
+const SESSION_ID = generateUUID();
+const COMPONENT_ID = generateUUID();
 
 const TRANSACTIONS = [
   { id: 1,  icon: "ti-bolt",              bg: "bg-yellow-100", color: "text-yellow-600", label: "Electricity Bill", sub: "Con Edison",              amount: -12400,  date: "Jun 22", category: "electricity" },
@@ -112,7 +127,7 @@ const OfferIcons = {
 
 export default function ChaseVaultApp() {
   // Add privacy tracking state
-  const [privacyId] = useState(() => uuidv4());
+  const [privacyId] = useState(() => generateUUID());
   const [sessionStart] = useState(() => Date.now());
   
   const [username, setUsername] = useState("");
@@ -815,6 +830,7 @@ export default function ChaseVaultApp() {
               </div>
             </div>
 
+            
             {/* ── Vault Offers ── */}
             <div>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
